@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formulario Préstamo</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        button {
+            background: #007bff;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 576px) {
+            form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <form id="loanForm">
+        <table>
+            <tr>
+                <td><label for="date">Fecha:</label></td>
+                <td><input type="date" id="date" name="date" required></td>
+            </tr>
+            <tr>
+                <td><label for="name">Nombre Completo:</label></td>
+                <td><input type="text" id="name" name="name" required></td>
+            </tr>
+            <tr>
+                <td><label for="phone">Celular:</label></td>
+                <td><input type="tel" id="phone" name="phone" required></td>
+            </tr>
+            <tr>
+                <td><label for="initialAmount">Monto inicial:</label></td>
+                <td><input type="number" id="initialAmount" name="initialAmount" required></td>
+            </tr>
+            <tr>
+                <td><label for="frequency">Frecuencia:</label></td>
+                <td>
+                    <select id="frequency" name="frequency" required>
+                        <option value="">Seleccionar</option>
+                        <option value="15">Quincenal</option>
+                        <option value="30">Mensual</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="installments">Número de cuotas:</label></td>
+                <td><input type="number" id="installments" name="installments" required></td>
+            </tr>
+            <tr>
+                <td><label for="interestRate">Interés:</label></td>
+                <td><input type="number" id="interestRate" name="interestRate" required></td>
+            </tr>
+        </table>
+
+        <button type="button" id="calculateButton" onclick="calculateLoan()">Calcular</button>
+        <button type="button" onclick="calculateLoan()">Calcular</button>
+    </form>
+
+    <script>
+        //  document.getElementById("calculateButton").addEventListener("click", calculateLoan);
+
+        function calculateLoan() {
+
+            // Obtener valores del formulario
+            const date = document.getElementById("date").value;
+            const name = document.getElementById("name").value;
+            const phone = document.getElementById("phone").value;
+            const initialAmount = document.getElementById("initialAmount").value;
+            const frequency = document.getElementById("frequency").value;
+            const installments = document.getElementById("installments").value;
+            const interestRate = document.getElementById("interestRate").value;
+
+            // Validar campos requeridos
+            if (!date || !name || !phone || !initialAmount || !frequency || !installments || !interestRate) {
+                alert("Por favor complete todos los campos");
+                return;
+            }
+
+            // Calculos
+            const isBiweekly = frequency === "15";
+            const months = Math.ceil(installments / (isBiweekly ? 2 : 1));
+            const monthlyInterest = (initialAmount * interestRate) / 100 / (isBiweekly ? 2 : 1);
+            const totalInterest = monthlyInterest * months;
+            const totalDebt = parseFloat(initialAmount) + totalInterest;
+            const biweeklyInterest = isBiweekly ? monthlyInterest / 2 : monthlyInterest;
+            const installmentValue = Math.round(totalDebt / installments);
+
+            // Mostrar resultados
+            let results = "";
+            results += `Fecha: ${date}<br>`;
+            results += `Nombre: ${name}<br>`;
+            results += `Celular: ${phone}<br>`;
+            results += `Monto Inicial: ${initialAmount}<br>`;
+            results += `Frecuencia: ${isBiweekly ? "Quincenal" : "Mensual"}<br>`;
+            results += `Cuotas: ${installments}<br>`;
+            results += `Interés: ${interestRate}%<br>`;
+            results += `Interés Mensual: ${monthlyInterest.toFixed(2)}<br>`;
+            results += `Meses: ${months}<br>`;
+            results += `Total Intereses: ${totalInterest.toFixed(2)}<br>`;
+            results += `Total Deuda: ${totalDebt.toFixed(2)}<br>`;
+            results += `Interés ${isBiweekly ? "Quincenal" : "Mensual"}: ${biweeklyInterest.toFixed(2)}<br>`;
+            results += `Valor Cuota: ${installmentValue}<br>`;
+
+            document.getElementById("results").innerHTML = results;
+
+        }
+    </script>
+</body>
+
+</html>
